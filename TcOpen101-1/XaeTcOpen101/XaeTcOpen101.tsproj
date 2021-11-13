@@ -209,7 +209,7 @@
 			</Tasks>
 		</System>
 		<Plc>
-			<Project GUID="{855401C7-611B-424D-A53F-E86D85772078}" Name="TcOpenPlc" PrjFilePath="TcOpenPlc\TcOpenPlc.plcproj" TmcFilePath="TcOpenPlc\TcOpenPlc.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
+			<Project Disabled="true" GUID="{855401C7-611B-424D-A53F-E86D85772078}" Name="TcOpenPlc" PrjFilePath="TcOpenPlc\TcOpenPlc.plcproj" TmcFilePath="TcOpenPlc\TcOpenPlc.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
 				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="TcOpenPlc\TcOpenPlc.tmc">
 					<Name>TcOpenPlc Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>

@@ -10,7 +10,7 @@ namespace TcOpenPlcConnector
 {
     class Program
     {
-        static string AMS_ID = -"your-ams-id"- // Environment.GetEnvironmentVariable("Tc3Target");
+        static string AMS_ID = Environment.GetEnvironmentVariable("Tc3Target");
         static void Main(string[] args)
         {
             var plc = new TcOpenPlcTwinController(Tc3ConnectorAdapter.Create(AMS_ID, 851, true));
