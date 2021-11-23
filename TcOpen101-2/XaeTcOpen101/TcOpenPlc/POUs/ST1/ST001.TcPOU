@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="ST001" Id="{5af1b43d-14c7-04fa-0b48-9e143a30945f}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK ST001 EXTENDS TcoCore.TcoObject
+VAR
+	_piston : TcoPneumatics.TcoCylinder(THIS^);
+	_state : INT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[_piston(inoAtHomePos:= IO.iCH_1, inoAtWorkPos:= IO.iCH_2, inoToHomePos:= IO.qCH_1, inoToWorkPos:=IO.qCH_2);
+
+CASE _state OF
+	0:
+		IF(_piston.MoveToHome().Done) THEN
+			_state := 10;
+		END_IF
+	10:
+		IF(_piston.MoveToWork().Done) THEN
+			_state := 20;
+		END_IF
+	20:
+		_state := 0;
+END_CASE
+
+
+Messenger.Trace(CONCAT('Running state: ', INT_TO_STRING(_state)));]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

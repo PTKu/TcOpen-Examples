@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <GVL Name="IO" Id="{9c01c29d-8c97-099b-078d-6bef36fb2190}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL
+	iCH_1 AT %I* : BOOL;
+	iCH_2 AT %I* : BOOL;
+	iCH_3 AT %I* : BOOL;
+	iCH_4 AT %I* : BOOL;
+	iCH_5 AT %I* : BOOL;
+	iCH_6 AT %I* : BOOL;
+	iCH_7 AT %I* : BOOL;
+	iCH_8 AT %I* : BOOL;
+
+
+	qCH_1 AT %Q* : BOOL;
+	qCH_2 AT %Q* : BOOL;
+	qCH_3 AT %Q* : BOOL;
+	qCH_4 AT %Q* : BOOL;
+	qCH_5 AT %Q* : BOOL;
+	qCH_6 AT %Q* : BOOL;
+	qCH_7 AT %Q* : BOOL;
+	qCH_8 AT %Q* : BOOL;	
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

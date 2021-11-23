@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="SimpleContext" Id="{404e4782-a895-0791-0e74-8cec9f1417fa}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK SimpleContext EXTENDS TcoCore.TcoContext
+VAR
+	_st001 : ST001(THIS^);
+	_messenger : TcoCore.TcoMessenger(THIS^); 
+	_angelos : ARRAY[0..10] OF TcoCore.TcoMessenger(THIS^);
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="Main" Id="{0e596390-a93e-04ca-36f6-ffbae0eba6bb}">
+      <Declaration><![CDATA[(*~
+	<docu>
+		<summary>
+			Main method of the TcoContext. This is the entry point of any control logic that belongs to this context. 
+			The call of this method is ensured by calling the <c>InstanceName.Run()</c> method, and it must not be called explicitly.
+			This method is abstract, and it must be overridden in derived block.
+		</summary>
+	</docu>
+~*)
+METHOD PROTECTED  Main]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[THIS^.Environment.Messaging.MessageDigestMethod := eMessageDigestMethod.CRC32;
+THIS^.Environment.Messaging.MessengerLoggingMethod := eMessengerLogMethod.OnEventRisen;
+
+_messenger.Info('This is an info message');
+_messenger.Error('This is an error message');
+_messenger.Critical('This is an critical message 1111');
+
+_st001();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//IF(THIS^._startCycleCount MOD 10 = 0) THEN
+//	Logger.Push('This is a log entry', eMessageCategory.Trace);
+//END_IF;	
+
+//IF(THIS^._startCycleCount MOD 125 = 0) THEN
+//	Logger.Push('This is a log entry', eMessageCategory.Info);
+//END_IF;	
+
+//IF(THIS^._startCycleCount MOD 400 = 0) THEN
+//	Logger.Push('This is a log entry', eMessageCategory.Warning);
+//END_IF;	
+
+//IF(THIS^._startCycleCount MOD 2000 = 0) THEN
+//	Logger.Push('This is a log entry', eMessageCategory.Error);
+//END_IF;	
+
+
+]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>
