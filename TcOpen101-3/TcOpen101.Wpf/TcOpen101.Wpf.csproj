@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="TcOpen.Group.Wpf" Version="0.4.2-alpha.748" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TcOpenPlcConnector\TcOpenPlcConnector.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,149 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="ST001" Id="{5af1b43d-14c7-04fa-0b48-9e143a30945f}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK ST001 EXTENDS TcoCore.TcoObject
+VAR	
+	{attribute addProperty _moveHomeDefaultName "<#MOVE RIGHT#>"}
+	{attribute addProperty _moveWorkDefaultName "<#MOVE LEFT#>"}
+	{attribute addProperty _stopDefaultName "<#STOP#>"}
+	{attribute addProperty Name "<#Horizontal cyclinder A1#>"}
+	_horizontalPiston : TcoPneumatics.TcoCylinder(THIS^);
+	{attribute addProperty _moveHomeDefaultName "<#MOVE UP#>"}
+	{attribute addProperty _moveWorkDefaultName "<#MOVE DOWN#>"}
+	{attribute addProperty _stopDefaultName "<#STOP#>"}	
+	{attribute addProperty Name "<#Vertical cyclinder A2#>"}
+    _verticalPiston : TcoPneumatics.TcoCylinder(THIS^);
+	{attribute addProperty _moveHomeDefaultName "<#OPEN#>"}
+	{attribute addProperty _moveWorkDefaultName "<#CLOSE#>"}
+	{attribute addProperty _stopDefaultName "<#STOP#>"}
+	{attribute addProperty Name "<#Gripper A3#>"}
+	_gripperPiston : TcoPneumatics.TcoCylinder(THIS^);		
+	_groundState : INT;
+	_automatState : INT;
+	
+	{attribute addProperty Name "<#GROUND#>"}
+	_groundTask : TcoCore.TcoTask(THIS^);
+	{attribute addProperty Name "<#AUTOMAT#>"}
+	_automatTask : TcoCore.TcoTask(THIS^);
+	{attribute addProperty Name "<#SERVICE/MANUAL#>"}
+	_serviceTask : TcoCore.TcoTask(THIS^);
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[(*
+
+		COMPONENT INITIALIZATION
+	
+*)
+
+_horizontalPiston(inoAtHomePos:= IO.iCH_1, inoAtWorkPos:= IO.iCH_2, inoToHomePos:= IO.qCH_1, inoToWorkPos:=IO.qCH_2);
+_verticalPiston(inoAtHomePos:= IO.iCH_3, inoAtWorkPos:= IO.iCH_4, inoToHomePos:= IO.qCH_3, inoToWorkPos:=IO.qCH_4);
+_gripperPiston(inoAtHomePos:= IO.iCH_5, inoAtWorkPos:= IO.iCH_6, inoToHomePos:= IO.qCH_5, inoToWorkPos:=IO.qCH_6);
+
+(*
+
+	GROUND POSITION TASK
+
+*)
+
+IF(_groundTask.Execute()) THEN	
+	_serviceTask.Abort();
+	_automatTask.Abort();
+	CASE _groundState OF
+		0:
+		    _verticalPiston.MoveToHome();
+			IF(_verticalPiston.MoveHomeTask.Done) THEN				
+				_groundState := 10;
+			END_IF
+		10:
+			IF(_horizontalPiston.MoveToHome().Done) THEN
+				_groundState := 20;
+			END_IF	
+		20:
+			IF(_gripperPiston.MoveToHome().Done) THEN
+				_groundState := 30;
+			END_IF			
+		30:		
+			_groundTask.DoneWhen(TRUE);
+			_groundState := 0;
+	END_CASE
+	
+	_groundTask.ThrowWhen(_groundTask.ElapsedTime > T#5S);
+	
+Messenger.Trace(CONCAT('Running state ground task: ', INT_TO_STRING(_groundState)));		
+END_IF;
+
+(*
+
+		AUTOMAT MODE TASK
+
+*)
+
+
+_automatTask.Enabled := _groundTask.Done;
+
+IF(_automatTask.Execute()) THEN
+	CASE _automatState OF
+		0:
+		    _automatTask.Messenger.Info('Move vertical cyclinder down');
+			IF(_verticalPiston.MoveToWork().Done) THEN
+				_automatState := 10;	
+			END_IF
+		10:	
+		    _automatTask.Messenger.Info('Close gripper');
+			IF(_gripperPiston.MoveToWork().Done) THEN
+				_automatState := 20;	
+			END_IF
+		20:	
+		    _automatTask.Messenger.Info('Move vertical cyclinder up');
+			IF(_verticalPiston.MoveToHome().Done) THEN
+				_automatState := 30;	
+			END_IF
+		30:	
+		    _automatTask.Messenger.Info('Move horizontal cyclinder left');
+			IF(_horizontalPiston.MoveToWork().Done) THEN
+				_automatState := 40;	
+			END_IF
+		40:	
+			 _automatTask.Messenger.Info('Move vertical cyclinder down');
+			IF(_verticalPiston.MoveToWork().Done) THEN
+				_automatState := 50;	
+			END_IF
+		50:	
+		    _automatTask.Messenger.Info('Open gripper');
+			IF(_gripperPiston.MoveToHome().Done) THEN
+				_automatState := 60;	
+			END_IF	
+		60:	
+		    _automatTask.Messenger.Info('Move vertical cyclinder up');
+			IF(_verticalPiston.MoveToHome().Done) THEN
+				_groundState := 70;	
+			END_IF		
+		70:	
+		    _automatTask.Messenger.Info('Move vertical cyclinder right');
+			IF(_horizontalPiston.MoveToHome().Done) THEN
+				_automatState := 80;	
+			END_IF	
+		80:	
+			_automatState := 0;
+	END_CASE
+END_IF
+
+(*
+
+		SERVICE MODE TASK
+
+*)
+
+IF(_serviceTask.Execute()) THEN
+	_automatState := 0;
+	_groundState := 0;
+	_groundTask.Restore();
+	_automatTask.Restore();
+	_horizontalPiston.Service();
+	_verticalPiston.Service();
+    _gripperPiston.Service();
+END_IF;	]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>
